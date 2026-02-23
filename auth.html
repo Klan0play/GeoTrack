@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔐 Вход и регистрация — GeoTrack Казахстан</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Open Sans', sans-serif;
+        }
+        
+        :root {
+            --primary: #1e88e5;
+            --primary-dark: #1565c0;
+            --primary-light: #64b5f6;
+            --secondary: #ff9800;
+            --success: #4caf50;
+            --danger: #f44336;
+            --warning: #ffb300;
+            --dark: #2c3e50;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --gray-light: #e9ecef;
+            --border: #dee2e6;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.15);
+            
+            /* Spacing */
+            --space-xs: 0.5rem;
+            --space-sm: 1rem;
+            --space-md: 1.5rem;
+            --space-lg: 2rem;
+            --space-xl: 3rem;
+            
+            /* Border Radius */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            
+            /* Transitions */
+            --transition: all 0.3s ease;
+            --transition-fast: all 0.15s ease;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: var(--space-md);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        /* ===== AUTH CONTAINER ===== */
+        .auth-container {
+            width: 100%;
+            max-width: 1200px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 700px;
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            background: white;
+        }
+        
+        @media (max-width: 992px) {
+            .auth-container {
+                grid-template-columns: 1fr;
+                max-width: 500px;
+            }
+        }
+        
+        /* ===== HERO SECTION ===== */
+        .auth-hero {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: var(--space-xl);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .auth-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(255,255,255,0.1)"/></svg>');
+            background-size: cover;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .logo i {
+            font-size: 3rem;
+        }
+        
+        .logo-text h1 {
+            font-size: 2rem;
+            font-family: 'Montserrat', sans-serif;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .logo-text p {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+        
+        .hero-features {
+            margin-top: var(--space-xl);
+        }
+        
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+            opacity: 0.9;
+        }
+        
+        .feature i {
+            font-size: 1.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* ===== FORMS SECTION ===== */
+        .auth-forms {
+            padding: var(--space-xl);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: white;
+        }
+        
+        .form-switcher {
+            display: flex;
+            margin-bottom: var(--space-lg);
+            border-bottom: 2px solid var(--border);
+        }
+        
+        .form-tab {
+            flex: 1;
+            padding: var(--space-md);
+            background: none;
+            border: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--gray);
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+        
+        .form-tab:hover {
+            color: var(--dark);
+        }
+        
+        .form-tab.active {
+            color: var(--primary);
+        }
+        
+        .form-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 3px 3px 0 0;
+        }
+        
+        .form-container {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .form-container.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .form-title {
+            margin-bottom: var(--space-lg);
+            text-align: center;
+        }
+        
+        .form-title h2 {
+            font-size: 1.8rem;
+            color: var(--dark);
+            margin-bottom: var(--space-xs);
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .form-title p {
+            color: var(--gray);
+        }
+        
+        /* ===== FORM ELEMENTS ===== */
+        .form-group {
+            margin-bottom: var(--space-md);
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: var(--space-xs);
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .form-label.required::after {
+            content: ' *';
+            color: var(--danger);
+        }
+        
+        .input-with-icon {
+            position: relative;
+        }
+        
+        .input-with-icon i {
+            position: absolute;
+            left: var(--space-md);
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+            pointer-events: none;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: var(--space-md) var(--space-md) var(--space-md) 3rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            transition: var(--transition-fast);
+            background: white;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.2);
+        }
+        
+        .form-control.error {
+            border-color: var(--danger);
+        }
+        
+        .error-message {
+            color: var(--danger);
+            font-size: 0.9rem;
+            margin-top: var(--space-xs);
+            display: none;
+        }
+        
+        .error-message.show {
+            display: block;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: var(--space-md);
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        /* ===== CHECKBOX ===== */
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-md);
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            margin-top: 3px;
+            cursor: pointer;
+        }
+        
+        .checkbox-group label {
+            font-size: 0.9rem;
+            color: var(--gray);
+            cursor: pointer;
+            line-height: 1.4;
+        }
+        
+        .checkbox-group a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .checkbox-group a:hover {
+            text-decoration: underline;
+        }
+        
+        /* ===== BUTTONS ===== */
+        .btn {
+            width: 100%;
+            padding: var(--space-md);
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .btn-secondary {
+            background: var(--gray-light);
+            color: var(--dark);
+            border: 2px solid var(--border);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+        
+        .btn-google {
+            background: white;
+            color: var(--dark);
+            border: 2px solid var(--border);
+            margin-top: var(--space-sm);
+        }
+        
+        .btn-google:hover {
+            background: var(--light);
+            border-color: var(--gray);
+        }
+        
+        .btn-google i {
+            color: #db4437;
+        }
+        
+        /* ===== DIVIDER ===== */
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: var(--space-lg) 0;
+            color: var(--gray);
+        }
+        
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+        
+        .divider span {
+            padding: 0 var(--space-md);
+            font-size: 0.9rem;
+        }
+        
+        /* ===== FOOTER LINKS ===== */
+        .auth-footer {
+            text-align: center;
+            margin-top: var(--space-lg);
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .auth-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        /* ===== NOTIFICATION ===== */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: var(--space-md) var(--space-lg);
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            transform: translateX(400px);
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 2000;
+            max-width: 400px;
+            border-left: 5px solid var(--primary);
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            border-left-color: var(--success);
+        }
+        
+        .notification.error {
+            border-left-color: var(--danger);
+        }
+        
+        .notification-icon {
+            font-size: 2rem;
+        }
+        
+        .notification.success .notification-icon {
+            color: var(--success);
+        }
+        
+        .notification.error .notification-icon {
+            color: var(--danger);
+        }
+        
+        .notification-content h4 {
+            margin: 0 0 5px 0;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .notification-content p {
+            margin: 0;
+            color: var(--gray);
+        }
+        
+        /* ===== LOADING ===== */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+            flex-direction: column;
+        }
+        
+        .loading-overlay.active {
+            display: flex;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: var(--space-md);
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            font-size: 1.1rem;
+            color: var(--dark);
+            font-weight: 600;
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .auth-container {
+                min-height: auto;
+            }
+            
+            .auth-hero {
+                padding: var(--space-lg);
+                display: none; /* Скрываем на мобилках */
+            }
+            
+            .auth-forms {
+                padding: var(--space-lg);
+            }
+        }
+        
+        /* ===== WELCOME MODAL ===== */
+        .welcome-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 4000;
+            padding: var(--space-md);
+        }
+        
+        .welcome-modal.active {
+            display: flex;
+        }
+        
+        .welcome-content {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            animation: scaleIn 0.5s ease;
+        }
+        
+        @keyframes scaleIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        .welcome-icon {
+            font-size: 4rem;
+            color: var(--primary);
+            margin-bottom: var(--space-md);
+        }
+        
+        .welcome-content h2 {
+            color: var(--dark);
+            margin-bottom: var(--space-sm);
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .welcome-content p {
+            color: var(--gray);
+            margin-bottom: var(--space-lg);
+            line-height: 1.6;
+        }
+        
+        .welcome-badges {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-sm);
+            margin: var(--space-lg) 0;
+            flex-wrap: wrap;
+        }
+        
+        .welcome-badge {
+            background: var(--light);
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+        
+        .welcome-badge i {
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Container -->
+    <div class="auth-container">
+        <!-- Hero Section -->
+        <div class="auth-hero">
+            <div class="hero-content">
+                <div class="logo">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <div class="logo-text">
+                        <h1>GeoTrack</h1>
+                        <p>Местный Гид Казахстана</p>
+                    </div>
+                </div>
+                
+                <h2 style="font-size: 2.5rem; margin-bottom: var(--space-md);">
+                    Откройте Казахстан по-новому
+                </h2>
+                <p style="font-size: 1.1rem; opacity: 0.9; margin-bottom: var(--space-xl);">
+                    Присоединяйтесь к сообществу путешественников и экспертов
+                </p>
+                
+                <div class="hero-features">
+                    <div class="feature">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h3>Интерактивная карта</h3>
+                            <p>Исследуйте достопримечательности в реальном времени</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature">
+                        <i class="fas fa-heart"></i>
+                        <div>
+                            <h3>Сохраняйте любимые места</h3>
+                            <p>Создайте свою коллекцию мест для посещения</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature">
+                        <i class="fas fa-star"></i>
+                        <div>
+                            <h3>Делитесь впечатлениями</h3>
+                            <p>Оставляйте отзывы и помогайте другим путешественникам</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Forms Section -->
+        <div class="auth-forms">
+            <!-- Form Switcher -->
+            <div class="form-switcher">
+                <button class="form-tab active" data-form="login">Вход</button>
+                <button class="form-tab" data-form="register">Регистрация</button>
+            </div>
+            
+            <!-- Login Form -->
+            <div class="form-container active" id="login-form">
+                <div class="form-title">
+                    <h2>Вход в аккаунт</h2>
+                    <p>Войдите, чтобы продолжить путешествие</p>
+                </div>
+                
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="login-email" class="form-label required">Email</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="login-email" class="form-control" 
+                                   placeholder="your@email.com" required>
+                        </div>
+                        <div class="error-message" id="login-email-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="login-password" class="form-label required">Пароль</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="login-password" class="form-control" 
+                                   placeholder="Введите пароль" required>
+                            <button type="button" class="password-toggle" 
+                                    onclick="togglePassword('login-password', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="error-message" id="login-password-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="remember-me">
+                            <label for="remember-me">Запомнить меня</label>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Войти
+                    </button>
+                    
+                    <div class="divider">
+                        <span>или</span>
+                    </div>
+                    
+                    <button type="button" class="btn btn-google" onclick="loginWithGoogle()">
+                        <i class="fab fa-google"></i>
+                        Войти через Google
+                    </button>
+                    
+                    <div class="auth-footer">
+                        <p>Забыли пароль? <a href="#" onclick="showForgotPassword()">Восстановить</a></p>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Register Form -->
+            <div class="form-container" id="register-form">
+                <div class="form-title">
+                    <h2>Регистрация</h2>
+                    <p>Создайте аккаунт для доступа ко всем функциям</p>
+                </div>
+                
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="register-name" class="form-label required">Имя</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="register-name" class="form-control" 
+                                   placeholder="Ваше имя" required>
+                        </div>
+                        <div class="error-message" id="register-name-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="register-email" class="form-label required">Email</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="register-email" class="form-control" 
+                                   placeholder="your@email.com" required>
+                        </div>
+                        <div class="error-message" id="register-email-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="register-password" class="form-label required">Пароль</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="register-password" class="form-control" 
+                                   placeholder="Минимум 6 символов" required>
+                            <button type="button" class="password-toggle" 
+                                    onclick="togglePassword('register-password', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="error-message" id="register-password-error"></div>
+                        <small style="color: var(--gray); display: block; margin-top: 5px;">
+                            Минимум 6 символов, включая буквы и цифры
+                        </small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="register-confirm" class="form-label required">Подтверждение пароля</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="register-confirm" class="form-control" 
+                                   placeholder="Повторите пароль" required>
+                            <button type="button" class="password-toggle" 
+                                    onclick="togglePassword('register-confirm', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="error-message" id="register-confirm-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="register-role" class="form-label required">Роль</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-user-tag"></i>
+                            <select id="register-role" class="form-control" required>
+                                <option value="">Выберите роль</option>
+                                <option value="traveler">Путешественник</option>
+                                <option value="local_guide">Местный гид</option>
+                                <option value="photographer">Фотограф</option>
+                                <option value="blogger">Блогер</option>
+                            </select>
+                        </div>
+                        <div class="error-message" id="register-role-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="terms" required>
+                            <label for="terms">
+                                Я соглашаюсь с <a href="#" onclick="showTerms()">условиями использования</a> 
+                                и <a href="#" onclick="showPrivacy()">политикой конфиденциальности</a>
+                            </label>
+                        </div>
+                        <div class="error-message" id="terms-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="newsletter" checked>
+                            <label for="newsletter">
+                                Получать новости о новых местах и акциях
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-user-plus"></i>
+                        Зарегистрироваться
+                    </button>
+                    
+                    <div class="divider">
+                        <span>или</span>
+                    </div>
+                    
+                    <button type="button" class="btn btn-google" onclick="registerWithGoogle()">
+                        <i class="fab fa-google"></i>
+                        Зарегистрироваться через Google
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Forgot Password Form -->
+            <div class="form-container" id="forgot-form">
+                <div class="form-title">
+                    <h2>Восстановление пароля</h2>
+                    <p>Введите email для получения инструкций</p>
+                </div>
+                
+                <form id="forgotForm">
+                    <div class="form-group">
+                        <label for="forgot-email" class="form-label required">Email</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="forgot-email" class="form-control" 
+                                   placeholder="your@email.com" required>
+                        </div>
+                        <div class="error-message" id="forgot-email-error"></div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i>
+                        Отправить инструкции
+                    </button>
+                    
+                    <div class="auth-footer">
+                        <p><a href="#" onclick="showLogin()">Вернуться ко входу</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Welcome Modal -->
+    <div class="welcome-modal" id="welcome-modal">
+        <div class="welcome-content">
+            <div class="welcome-icon">
+                <i class="fas fa-star"></i>
+            </div>
+            <h2>Добро пожаловать в GeoTrack!</h2>
+            <p>Ваш аккаунт успешно создан. Теперь вы можете:</p>
+            
+            <div class="welcome-badges">
+                <div class="welcome-badge">
+                    <i class="fas fa-map-marker-alt"></i>
+                    Добавлять места
+                </div>
+                <div class="welcome-badge">
+                    <i class="fas fa-heart"></i>
+                    Сохранять в избранное
+                </div>
+                <div class="welcome-badge">
+                    <i class="fas fa-comment"></i>
+                    Оставлять отзывы
+                </div>
+            </div>
+            
+            <button class="btn btn-primary" onclick="continueToApp()" style="width: auto; padding: 12px 40px;">
+                <i class="fas fa-rocket"></i>
+                Начать исследовать
+            </button>
+        </div>
+    </div>
+    
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <div class="notification-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="notification-content">
+            <h4 id="notification-title">Успешно!</h4>
+            <p id="notification-message">Операция выполнена успешно</p>
+        </div>
+    </div>
+    
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Загрузка...</div>
+    </div>
+
+    <script>
+        // ===== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ =====
+        let currentUser = null;
+        let usersDatabase = [];
+        
+        // ===== ИНИЦИАЛИЗАЦИЯ =====
+        document.addEventListener('DOMContentLoaded', function() {
+            // Загружаем пользователей из localStorage
+            loadUsers();
+            
+            // Проверяем, есть ли уже авторизованный пользователь
+            checkExistingSession();
+            
+            // Инициализируем переключение форм
+            initFormSwitcher();
+            
+            // Инициализируем обработчики форм
+            initForms();
+            
+            // Проверяем, нужно ли показать приветствие
+            checkForWelcome();
+        });
+        
+        // ===== ЗАГРУЗКА ПОЛЬЗОВАТЕЛЕЙ =====
+        function loadUsers() {
+            try {
+                usersDatabase = JSON.parse(localStorage.getItem('geotrack_users') || '[]');
+                
+                // Если нет пользователей, создаем тестового админа
+                if (usersDatabase.length === 0) {
+                    createDefaultUsers();
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки пользователей:', error);
+                usersDatabase = [];
+                createDefaultUsers();
+            }
+        }
+        
+        function createDefaultUsers() {
+            const defaultUsers = [
+                {
+                    id: 'admin_001',
+                    email: 'admin@geotrack.kz',
+                    password: 'admin123',
+                    name: 'Администратор',
+                    role: 'admin',
+                    avatar: null,
+                    joined: new Date().toISOString(),
+                    verified: true,
+                    stats: {
+                        placesAdded: 0,
+                        reviews: 0,
+                        favorites: 0
+                    },
+                    settings: {
+                        notifications: true,
+                        theme: 'light',
+                        language: 'ru'
+                    }
+                },
+                {
+                    id: 'user_001',
+                    email: 'user@test.kz',
+                    password: 'user123',
+                    name: 'Тестовый Пользователь',
+                    role: 'traveler',
+                    avatar: null,
+                    joined: new Date().toISOString(),
+                    verified: false,
+                    stats: {
+                        placesAdded: 0,
+                        reviews: 0,
+                        favorites: 0
+                    },
+                    settings: {
+                        notifications: true,
+                        theme: 'light',
+                        language: 'ru'
+                    }
+                }
+            ];
+            
+            usersDatabase = defaultUsers;
+            saveUsers();
+        }
+        
+        function saveUsers() {
+            localStorage.setItem('geotrack_users', JSON.stringify(usersDatabase));
+        }
+        
+        // ===== ПРОВЕРКА СЕССИИ =====
+        function checkExistingSession() {
+            const session = localStorage.getItem('geotrack_session');
+            if (session) {
+                try {
+                    const sessionData = JSON.parse(session);
+                    if (sessionData.expires > Date.now()) {
+                        // Сессия активна, перенаправляем в приложение
+                        window.location.href = 'index.html';
+                    } else {
+                        // Сессия истекла
+                        localStorage.removeItem('geotrack_session');
+                    }
+                } catch (error) {
+                    console.error('Ошибка проверки сессии:', error);
+                }
+            }
+        }
+        
+        // ===== ПЕРЕКЛЮЧЕНИЕ ФОРМ =====
+        function initFormSwitcher() {
+            document.querySelectorAll('.form-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const formId = this.getAttribute('data-form');
+                    
+                    // Убираем активный класс у всех
+                    document.querySelectorAll('.form-tab').forEach(t => {
+                        t.classList.remove('active');
+                    });
+                    
+                    // Добавляем активный класс текущему
+                    this.classList.add('active');
+                    
+                    // Показываем соответствующую форму
+                    showForm(formId);
+                });
+            });
+        }
+        
+        function showForm(formId) {
+            // Скрываем все формы
+            document.querySelectorAll('.form-container').forEach(form => {
+                form.classList.remove('active');
+            });
+            
+            // Показываем нужную форму
+            const form = document.getElementById(`${formId}-form`);
+            if (form) {
+                form.classList.add('active');
+            }
+        }
+        
+        function showLogin() {
+            showForm('login');
+        }
+        
+        function showForgotPassword() {
+            showForm('forgot');
+        }
+        
+        // ===== ИНИЦИАЛИЗАЦИЯ ФОРМ =====
+        function initForms() {
+            // Форма входа
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    loginUser();
+                });
+            }
+            
+            // Форма регистрации
+            const registerForm = document.getElementById('registerForm');
+            if (registerForm) {
+                registerForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    registerUser();
+                });
+            }
+            
+            // Форма восстановления пароля
+            const forgotForm = document.getElementById('forgotForm');
+            if (forgotForm) {
+                forgotForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    resetPassword();
+                });
+            }
+        }
+        
+        // ===== ВХОД ПОЛЬЗОВАТЕЛЯ =====
+        function loginUser() {
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+            const remember = document.getElementById('remember-me').checked;
+            
+            // Валидация
+            if (!validateEmail(email)) {
+                showError('login-email-error', 'Введите корректный email');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showError('login-password-error', 'Пароль должен содержать минимум 6 символов');
+                return;
+            }
+            
+            // Показываем загрузку
+            showLoading(true);
+            
+            // Ищем пользователя
+            setTimeout(() => {
+                const user = usersDatabase.find(u => 
+                    u.email.toLowerCase() === email.toLowerCase() && 
+                    u.password === password
+                );
+                
+                if (user) {
+                    // Сохраняем сессию
+                    createSession(user, remember);
+                    
+                    // Обновляем статистику входа
+                    user.lastLogin = new Date().toISOString();
+                    user.loginCount = (user.loginCount || 0) + 1;
+                    saveUsers();
+                    
+                    // Перенаправляем в приложение
+                    window.location.href = 'index.html';
+                } else {
+                    showLoading(false);
+                    showError('login-password-error', 'Неверный email или пароль');
+                    showNotification('error', 'Ошибка входа', 'Проверьте правильность данных');
+                }
+            }, 1000);
+        }
+        
+        // ===== РЕГИСТРАЦИЯ ПОЛЬЗОВАТЕЛЯ =====
+        function registerUser() {
+            const name = document.getElementById('register-name').value.trim();
+            const email = document.getElementById('register-email').value.trim();
+            const password = document.getElementById('register-password').value;
+            const confirmPassword = document.getElementById('register-confirm').value;
+            const role = document.getElementById('register-role').value;
+            const terms = document.getElementById('terms').checked;
+            const newsletter = document.getElementById('newsletter').checked;
+            
+            // Сброс ошибок
+            resetErrors();
+            
+            // Валидация
+            let isValid = true;
+            
+            if (name.length < 2) {
+                showError('register-name-error', 'Имя должно содержать минимум 2 символа');
+                isValid = false;
+            }
+            
+            if (!validateEmail(email)) {
+                showError('register-email-error', 'Введите корректный email');
+                isValid = false;
+            }
+            
+            if (password.length < 6) {
+                showError('register-password-error', 'Пароль должен содержать минимум 6 символов');
+                isValid = false;
+            } else if (!validatePassword(password)) {
+                showError('register-password-error', 'Пароль должен содержать буквы и цифры');
+                isValid = false;
+            }
+            
+            if (password !== confirmPassword) {
+                showError('register-confirm-error', 'Пароли не совпадают');
+                isValid = false;
+            }
+            
+            if (!role) {
+                showError('register-role-error', 'Выберите роль');
+                isValid = false;
+            }
+            
+            if (!terms) {
+                showError('terms-error', 'Необходимо принять условия использования');
+                isValid = false;
+            }
+            
+            // Проверка на существующего пользователя
+            const existingUser = usersDatabase.find(u => 
+                u.email.toLowerCase() === email.toLowerCase()
+            );
+            
+            if (existingUser) {
+                showError('register-email-error', 'Пользователь с таким email уже существует');
+                isValid = false;
+            }
+            
+            if (!isValid) {
+                showNotification('error', 'Ошибка регистрации', 'Исправьте отмеченные поля');
+                return;
+            }
+            
+            // Показываем загрузку
+            showLoading(true);
+            
+            // Создаем нового пользователя
+            setTimeout(() => {
+                const newUser = {
+                    id: 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                    email: email.toLowerCase(),
+                    password: password,
+                    name: name,
+                    role: role,
+                    avatar: null,
+                    joined: new Date().toISOString(),
+                    verified: false,
+                    newsletter: newsletter,
+                    stats: {
+                        placesAdded: 0,
+                        reviews: 0,
+                        favorites: 0,
+                        rating: 0,
+                        contributions: 0
+                    },
+                    achievements: [],
+                    settings: {
+                        notifications: true,
+                        theme: 'light',
+                        language: 'ru',
+                        emailNotifications: newsletter
+                    },
+                    social: {
+                        instagram: null,
+                        telegram: null,
+                        website: null
+                    },
+                    preferences: {
+                        categories: [],
+                        regions: []
+                    }
+                };
+                
+                // Добавляем пользователя в базу
+                usersDatabase.push(newUser);
+                saveUsers();
+                
+                // Создаем сессию
+                createSession(newUser, true);
+                
+                // Сохраняем флаг нового пользователя
+                localStorage.setItem('geotrack_new_user', 'true');
+                
+                showLoading(false);
+                
+                // Показываем приветственное окно
+                document.getElementById('welcome-modal').classList.add('active');
+                
+            }, 1500);
+        }
+        
+        // ===== ВОССТАНОВЛЕНИЕ ПАРОЛЯ =====
+        function resetPassword() {
+            const email = document.getElementById('forgot-email').value.trim();
+            
+            if (!validateEmail(email)) {
+                showError('forgot-email-error', 'Введите корректный email');
+                return;
+            }
+            
+            const user = usersDatabase.find(u => u.email.toLowerCase() === email.toLowerCase());
+            
+            if (!user) {
+                showError('forgot-email-error', 'Пользователь с таким email не найден');
+                return;
+            }
+            
+            showLoading(true);
+            
+            setTimeout(() => {
+                showLoading(false);
+                showNotification('success', 'Инструкции отправлены', 
+                    'На ваш email отправлены инструкции по восстановлению пароля');
+                
+                // В реальном приложении здесь была бы отправка email
+                console.log('Password reset requested for:', email);
+                
+                // Возвращаем ко входу через 3 секунды
+                setTimeout(() => {
+                    showLogin();
+                }, 3000);
+            }, 1000);
+        }
+        
+        // ===== СОЗДАНИЕ СЕССИИ =====
+        function createSession(user, remember = false) {
+            const sessionData = {
+                userId: user.id,
+                email: user.email,
+                name: user.name,
+                role: user.role,
+                expires: remember ? Date.now() + (30 * 24 * 60 * 60 * 1000) : Date.now() + (24 * 60 * 60 * 1000),
+                created: new Date().toISOString()
+            };
+            
+            localStorage.setItem('geotrack_session', JSON.stringify(sessionData));
+            localStorage.setItem('geotrack_user', JSON.stringify(user));
+        }
+        
+        // ===== ВАЛИДАЦИЯ =====
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+        
+        function validatePassword(password) {
+            // Минимум 6 символов, буквы и цифры
+            return password.length >= 6 && /\d/.test(password) && /[a-zA-Z]/.test(password);
+        }
+        
+        // ===== ОБРАБОТКА ОШИБОК =====
+        function showError(elementId, message) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = message;
+                element.classList.add('show');
+                
+                // Добавляем класс ошибки к полю ввода
+                const inputId = elementId.replace('-error', '');
+                const input = document.getElementById(inputId);
+                if (input) {
+                    input.classList.add('error');
+                    input.addEventListener('input', function() {
+                        this.classList.remove('error');
+                        element.classList.remove('show');
+                    }, { once: true });
+                }
+            }
+        }
+        
+        function resetErrors() {
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.classList.remove('show');
+            });
+            document.querySelectorAll('.form-control.error').forEach(el => {
+                el.classList.remove('error');
+            });
+        }
+        
+        // ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====
+        function togglePassword(inputId, button) {
+            const input = document.getElementById(inputId);
+            const icon = button.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fas fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'fas fa-eye';
+            }
+        }
+        
+        function showNotification(type, title, message) {
+            const notification = document.getElementById('notification');
+            const icon = notification.querySelector('.notification-icon i');
+            const titleEl = document.getElementById('notification-title');
+            const messageEl = document.getElementById('notification-message');
+            
+            // Устанавливаем тип
+            notification.className = `notification ${type}`;
+            icon.className = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
+            
+            // Устанавливаем контент
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+            
+            // Показываем
+            notification.classList.add('show');
+            
+            // Скрываем через 5 секунд
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 5000);
+        }
+        
+        function showLoading(show) {
+            const overlay = document.getElementById('loading-overlay');
+            if (show) {
+                overlay.classList.add('active');
+            } else {
+                overlay.classList.remove('active');
+            }
+        }
+        
+        function checkForWelcome() {
+            if (localStorage.getItem('geotrack_new_user') === 'true') {
+                document.getElementById('welcome-modal').classList.add('active');
+                localStorage.removeItem('geotrack_new_user');
+            }
+        }
+        
+        function continueToApp() {
+            document.getElementById('welcome-modal').classList.remove('active');
+            window.location.href = 'index.html';
+        }
+        
+        // ===== СОЦИАЛЬНАЯ АВТОРИЗАЦИЯ (заглушки) =====
+        function loginWithGoogle() {
+            showNotification('info', 'Google Auth', 'В реальном приложении здесь будет интеграция с Google OAuth');
+            // В реальном приложении: window.location.href = 'https://accounts.google.com/o/oauth2/auth?...';
+        }
+        
+        function registerWithGoogle() {
+            showNotification('info', 'Google Auth', 'В реальном приложении здесь будет интеграция с Google OAuth');
+        }
+        
+        function showTerms() {
+            alert('Условия использования\n\n1. Вы можете добавлять места\n2. Вы можете оставлять отзывы\n3. Контент должен быть уместным\n4. Админ может модерировать контент');
+        }
+        
+        function showPrivacy() {
+            alert('Политика конфиденциальности\n\n1. Мы храним только необходимые данные\n2. Мы не передаем данные третьим лицам\n3. Вы можете удалить свой аккаунт в любое время');
+        }
+        
+        // ===== ЭКСПОРТ ФУНКЦИЙ =====
+        window.authSystem = {
+            loginUser,
+            registerUser,
+            logout: function() {
+                localStorage.removeItem('geotrack_session');
+                localStorage.removeItem('geotrack_user');
+                window.location.href = 'auth.html';
+            },
+            getCurrentUser: function() {
+                const session = localStorage.getItem('geotrack_session');
+                if (session) {
+                    try {
+                        return JSON.parse(session);
+                    } catch (e) {
+                        return null;
+                    }
+                }
+                return null;
+            },
+            isLoggedIn: function() {
+                const session = localStorage.getItem('geotrack_session');
+                if (!session) return false;
+                
+                try {
+                    const data = JSON.parse(session);
+                    return data.expires > Date.now();
+                } catch (e) {
+                    return false;
+                }
+            },
+            isAdmin: function() {
+                const user = this.getCurrentUser();
+                return user && user.role === 'admin';
+            }
+        };
+    </script>
+</body>
+</html>

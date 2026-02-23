@@ -1,0 +1,1922 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 Админ-панель — Модерация мест | GeoTrack</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Open Sans', sans-serif;
+        }
+        
+        :root {
+            /* Colors */
+            --primary: #1e88e5;
+            --primary-dark: #1565c0;
+            --primary-light: #64b5f6;
+            --secondary: #ff9800;
+            --success: #4caf50;
+            --danger: #f44336;
+            --warning: #ffb300;
+            --dark: #2c3e50;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --gray-light: #e9ecef;
+            --border: #dee2e6;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.15);
+            
+            /* Spacing */
+            --space-xs: 0.5rem;
+            --space-sm: 1rem;
+            --space-md: 1.5rem;
+            --space-lg: 2rem;
+            --space-xl: 3rem;
+            
+            /* Border Radius */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            
+            /* Transitions */
+            --transition: all 0.3s ease;
+            --transition-fast: all 0.15s ease;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        /* ===== ADMIN HEADER ===== */
+        .admin-header {
+            background: linear-gradient(135deg, var(--dark), #1a252f);
+            color: white;
+            padding: var(--space-md) 0;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .admin-header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--space-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .admin-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        
+        .admin-logo i {
+            font-size: 2.5rem;
+            color: var(--primary-light);
+        }
+        
+        .admin-logo-text h1 {
+            font-size: 1.8rem;
+            margin: 0;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .admin-logo-text p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin: 0;
+        }
+        
+        .admin-controls {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+        
+        .admin-stats {
+            display: flex;
+            gap: var(--space-md);
+            background: rgba(255, 255, 255, 0.1);
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-md);
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 0 var(--space-sm);
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .stat-item:last-child {
+            border-right: none;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: block;
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+        
+        .logout-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            transition: var(--transition);
+        }
+        
+        .logout-btn:hover {
+            background: #d32f2f;
+            transform: translateY(-2px);
+        }
+        
+        /* ===== ADMIN NAV ===== */
+        .admin-nav {
+            background: white;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 76px;
+            z-index: 999;
+        }
+        
+        .admin-nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--space-md);
+        }
+        
+        .admin-tabs {
+            display: flex;
+            overflow-x: auto;
+        }
+        
+        .admin-tab {
+            padding: var(--space-md) var(--space-lg);
+            border: none;
+            background: none;
+            color: var(--gray);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: var(--transition);
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+        
+        .admin-tab:hover {
+            color: var(--dark);
+            background: var(--gray-light);
+        }
+        
+        .admin-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            background: rgba(30, 136, 229, 0.05);
+        }
+        
+        .admin-tab-badge {
+            background: var(--gray);
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .admin-tab.active .admin-tab-badge {
+            background: var(--primary);
+        }
+        
+        /* ===== MAIN CONTENT ===== */
+        .admin-main {
+            max-width: 1400px;
+            margin: var(--space-xl) auto;
+            padding: 0 var(--space-md);
+        }
+        
+        /* ===== FILTERS ===== */
+        .filters-bar {
+            background: white;
+            padding: var(--space-md);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            margin-bottom: var(--space-lg);
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-md);
+            align-items: center;
+        }
+        
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: var(--space-sm);
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: var(--space-sm) var(--space-sm) var(--space-sm) 2.5rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .filter-group {
+            display: flex;
+            gap: var(--space-sm);
+            align-items: center;
+        }
+        
+        .filter-select {
+            padding: var(--space-sm);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
+            background: white;
+            color: var(--dark);
+            font-weight: 500;
+            cursor: pointer;
+            min-width: 150px;
+        }
+        
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .filter-btn {
+            padding: var(--space-sm) var(--space-md);
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            transition: var(--transition);
+        }
+        
+        .filter-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        /* ===== PLACES LIST ===== */
+        .places-container {
+            display: grid;
+            gap: var(--space-md);
+        }
+        
+        .place-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 2px solid transparent;
+        }
+        
+        .place-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .place-card.pending {
+            border-left: 4px solid var(--warning);
+        }
+        
+        .place-card.approved {
+            border-left: 4px solid var(--success);
+        }
+        
+        .place-card.rejected {
+            border-left: 4px solid var(--danger);
+        }
+        
+        .place-card-header {
+            padding: var(--space-md);
+            background: var(--light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .place-info {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+        
+        .place-photo {
+            width: 80px;
+            height: 60px;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            background: var(--gray-light);
+        }
+        
+        .place-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .place-details h3 {
+            margin: 0 0 var(--space-xs) 0;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.2rem;
+        }
+        
+        .place-meta {
+            display: flex;
+            gap: var(--space-md);
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .place-meta i {
+            margin-right: 4px;
+        }
+        
+        .place-status {
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-sm);
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-approved {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-rejected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        /* ===== PLACE CONTENT ===== */
+        .place-content {
+            padding: var(--space-md);
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: var(--space-md);
+        }
+        
+        @media (max-width: 992px) {
+            .place-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .place-description {
+            color: var(--dark);
+            line-height: 1.7;
+        }
+        
+        .place-description p {
+            margin-bottom: var(--space-sm);
+        }
+        
+        .place-sidebar {
+            background: var(--light);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+        }
+        
+        .sidebar-section {
+            margin-bottom: var(--space-md);
+        }
+        
+        .sidebar-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .sidebar-section h4 {
+            color: var(--dark);
+            margin-bottom: var(--space-sm);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+        
+        .sidebar-section p {
+            color: var(--gray);
+            font-size: 0.95rem;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .coordinates {
+            font-family: monospace;
+            background: white;
+            padding: var(--space-sm);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+        
+        /* ===== PHOTOS GALLERY ===== */
+        .photos-gallery {
+            margin-top: var(--space-md);
+        }
+        
+        .gallery-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-sm);
+        }
+        
+        .photos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: var(--space-sm);
+        }
+        
+        .photo-item {
+            position: relative;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            aspect-ratio: 4/3;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .photo-item:hover {
+            transform: scale(1.05);
+        }
+        
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .photo-count {
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+        }
+        
+        /* ===== ACTIONS ===== */
+        .place-actions {
+            padding: var(--space-md);
+            background: var(--light);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .submitter-info {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .submitter-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: var(--space-sm);
+        }
+        
+        .action-btn {
+            padding: var(--space-sm) var(--space-md);
+            border: none;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            transition: var(--transition);
+            min-width: 120px;
+            justify-content: center;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        
+        .btn-approve {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-approve:hover {
+            background: #388e3c;
+        }
+        
+        .btn-reject {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .btn-reject:hover {
+            background: #d32f2f;
+        }
+        
+        .btn-edit {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-edit:hover {
+            background: var(--primary-dark);
+        }
+        
+        /* ===== MODAL ===== */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: var(--space-md);
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: var(--radius-lg);
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .modal-header {
+            padding: var(--space-md);
+            background: var(--light);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--gray);
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+        
+        .modal-close:hover {
+            background: var(--border);
+            color: var(--dark);
+        }
+        
+        .modal-body {
+            padding: var(--space-md);
+        }
+        
+        /* ===== STATS ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .stat-card {
+            background: white;
+            padding: var(--space-lg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: var(--transition);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .stat-card i {
+            font-size: 3rem;
+            margin-bottom: var(--space-md);
+            display: block;
+        }
+        
+        .stat-card.pending i { color: var(--warning); }
+        .stat-card.approved i { color: var(--success); }
+        .stat-card.rejected i { color: var(--danger); }
+        .stat-card.total i { color: var(--primary); }
+        
+        .stat-card h3 {
+            font-size: 2.5rem;
+            margin: var(--space-sm) 0;
+            color: var(--dark);
+        }
+        
+        .stat-card p {
+            color: var(--gray);
+            font-weight: 500;
+        }
+        
+        /* ===== EMPTY STATE ===== */
+        .empty-state {
+            text-align: center;
+            padding: var(--space-xl);
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            color: var(--gray-light);
+            margin-bottom: var(--space-md);
+        }
+        
+        .empty-state h3 {
+            color: var(--gray);
+            margin-bottom: var(--space-sm);
+        }
+        
+        .empty-state p {
+            color: var(--gray);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        /* ===== LOADING ===== */
+        .loading {
+            display: none;
+            justify-content: center;
+            padding: var(--space-xl);
+        }
+        
+        .loading.active {
+            display: flex;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .admin-header-content {
+                flex-direction: column;
+                gap: var(--space-md);
+                text-align: center;
+            }
+            
+            .admin-stats {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .admin-tabs {
+                overflow-x: auto;
+                padding-bottom: 5px;
+            }
+            
+            .filters-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-box {
+                min-width: 100%;
+            }
+            
+            .filter-group {
+                flex-wrap: wrap;
+            }
+            
+            .place-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .place-actions {
+                flex-direction: column;
+                gap: var(--space-md);
+                align-items: stretch;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Admin Header -->
+    <header class="admin-header">
+        <div class="admin-header-content">
+            <div class="admin-logo">
+                <i class="fas fa-user-shield"></i>
+                <div class="admin-logo-text">
+                    <h1>Админ-панель GeoTrack</h1>
+                    <p>Модерация пользовательских мест</p>
+                </div>
+            </div>
+            
+            <div class="admin-controls">
+                <div class="admin-stats">
+                    <div class="stat-item">
+                        <span class="stat-value" id="pending-count">0</span>
+                        <span class="stat-label">На проверке</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="approved-count">0</span>
+                        <span class="stat-label">Одобрено</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="rejected-count">0</span>
+                        <span class="stat-label">Отклонено</span>
+                    </div>
+                </div>
+                
+                <button class="logout-btn" onclick="logoutAdmin()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Выйти
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Admin Navigation -->
+    <nav class="admin-nav">
+        <div class="admin-nav-content">
+            <div class="admin-tabs">
+                <button class="admin-tab active" data-tab="pending">
+                    <i class="fas fa-clock"></i>
+                    На модерации
+                    <span class="admin-tab-badge" id="badge-pending">0</span>
+                </button>
+                <button class="admin-tab" data-tab="approved">
+                    <i class="fas fa-check-circle"></i>
+                    Одобренные
+                    <span class="admin-tab-badge" id="badge-approved">0</span>
+                </button>
+                <button class="admin-tab" data-tab="rejected">
+                    <i class="fas fa-times-circle"></i>
+                    Отклоненные
+                    <span class="admin-tab-badge" id="badge-rejected">0</span>
+                </button>
+                <button class="admin-tab" data-tab="all">
+                    <i class="fas fa-list"></i>
+                    Все места
+                    <span class="admin-tab-badge" id="badge-all">0</span>
+                </button>
+                <button class="admin-tab" data-tab="stats">
+                    <i class="fas fa-chart-bar"></i>
+                    Статистика
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <!-- Filters -->
+        <div class="filters-bar">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="search-input" placeholder="Поиск по названию, региону, описанию...">
+            </div>
+            
+            <div class="filter-group">
+                <select id="category-filter" class="filter-select">
+                    <option value="">Все категории</option>
+                    <option value="nature">Природа</option>
+                    <option value="history">История</option>
+                    <option value="culture">Культура</option>
+                    <option value="architecture">Архитектура</option>
+                    <option value="religion">Религия</option>
+                    <option value="entertainment">Развлечения</option>
+                </select>
+                
+                <select id="region-filter" class="filter-select">
+                    <option value="">Все регионы</option>
+                    <option value="Алматы">Алматы</option>
+                    <option value="Астана">Астана</option>
+                    <option value="Шымкент">Шымкент</option>
+                    <option value="Алматинская область">Алматинская область</option>
+                    <option value="Мангистауская область">Мангистауская область</option>
+                </select>
+                
+                <select id="date-filter" class="filter-select">
+                    <option value="">Все даты</option>
+                    <option value="today">Сегодня</option>
+                    <option value="week">Эта неделя</option>
+                    <option value="month">Этот месяц</option>
+                </select>
+            </div>
+            
+            <button class="filter-btn" onclick="applyFilters()">
+                <i class="fas fa-filter"></i>
+                Применить фильтры
+            </button>
+            
+            <button class="filter-btn" onclick="resetFilters()" style="background: var(--gray);">
+                <i class="fas fa-redo"></i>
+                Сбросить
+            </button>
+        </div>
+
+        <!-- Loading -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+        </div>
+
+        <!-- Places List -->
+        <div class="places-container" id="places-list"></div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="empty-state" style="display: none;">
+            <i class="fas fa-inbox"></i>
+            <h3>Нет мест для отображения</h3>
+            <p>Здесь появятся места, которые пользователи предложили для добавления на карту</p>
+        </div>
+
+        <!-- Stats Page -->
+        <div id="stats-page" style="display: none;">
+            <div class="stats-grid">
+                <div class="stat-card total">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h3 id="total-places">0</h3>
+                    <p>Всего мест на карте</p>
+                </div>
+                
+                <div class="stat-card pending">
+                    <i class="fas fa-clock"></i>
+                    <h3 id="stats-pending">0</h3>
+                    <p>Ожидают модерации</p>
+                </div>
+                
+                <div class="stat-card approved">
+                    <i class="fas fa-check-circle"></i>
+                    <h3 id="stats-approved">0</h3>
+                    <p>Одобрено</p>
+                </div>
+                
+                <div class="stat-card rejected">
+                    <i class="fas fa-times-circle"></i>
+                    <h3 id="stats-rejected">0</h3>
+                    <p>Отклонено</p>
+                </div>
+            </div>
+            
+            <div class="stat-card" style="margin-top: var(--space-md);">
+                <h4>Активность модерации</h4>
+                <div id="activity-chart" style="height: 300px; margin-top: var(--space-md);">
+                    <canvas id="activityChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Photo Modal -->
+    <div class="modal" id="photo-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Фотографии места</h3>
+                <button class="modal-close" onclick="closePhotoModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="photo-modal-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reject Modal -->
+    <div class="modal" id="reject-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Отклонить место</h3>
+                <button class="modal-close" onclick="closeRejectModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h4>Укажите причину отклонения:</h4>
+                <div style="margin: var(--space-md) 0;">
+                    <select id="reject-reason" class="filter-select" style="width: 100%;">
+                        <option value="">Выберите причину...</option>
+                        <option value="duplicate">Дубликат существующего места</option>
+                        <option value="incomplete">Неполная информация</option>
+                        <option value="poor_quality">Низкое качество фотографий</option>
+                        <option value="inappropriate">Несоответствующий контент</option>
+                        <option value="incorrect_location">Неправильное местоположение</option>
+                        <option value="other">Другая причина</option>
+                    </select>
+                </div>
+                
+                <div style="margin: var(--space-md) 0;">
+                    <label for="reject-comment">Комментарий (необязательно):</label>
+                    <textarea id="reject-comment" class="form-control" rows="4" 
+                              placeholder="Дополнительные пояснения..."></textarea>
+                </div>
+                
+                <div style="display: flex; gap: var(--space-sm); justify-content: flex-end;">
+                    <button class="action-btn" onclick="closeRejectModal()" 
+                            style="background: var(--gray);">
+                        Отмена
+                    </button>
+                    <button class="action-btn btn-reject" onclick="confirmRejection()">
+                        <i class="fas fa-ban"></i>
+                        Отклонить
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal" id="success-modal">
+        <div class="modal-content">
+            <div class="modal-header" style="background: var(--success); color: white;">
+                <h3><i class="fas fa-check-circle"></i> Успешно!</h3>
+                <button class="modal-close" onclick="closeSuccessModal()" style="color: white;">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="success-message"></p>
+                <div style="text-align: center; margin-top: var(--space-md);">
+                    <button class="action-btn btn-approve" onclick="closeSuccessModal()">
+                        Продолжить
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // ===== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ =====
+        let allPlaces = [];
+        let currentFilter = 'pending';
+        let currentPlaces = [];
+        let currentFilters = {
+            search: '',
+            category: '',
+            region: '',
+            date: ''
+        };
+        let currentRejectPlaceId = null;
+        let activityChart = null;
+
+        // ===== ИНИЦИАЛИЗАЦИЯ =====
+        document.addEventListener('DOMContentLoaded', function() {
+            // Проверка авторизации админа
+            checkAdminAuth();
+            
+            // Загрузка данных
+            loadPlaces();
+            
+            // Инициализация вкладок
+            initTabs();
+            
+            // Инициализация поиска
+            initSearch();
+            
+            // Загружаем активные места с главной страницы для статистики
+            loadActivePlaces();
+        });
+
+        // ===== АВТОРИЗАЦИЯ АДМИНА =====
+        function checkAdminAuth() {
+            const adminKey = localStorage.getItem('geotrack_admin');
+            const adminPassword = 'admin123'; // В реальном приложении должно быть на сервере
+            
+            if (!adminKey) {
+                const password = prompt('Введите пароль админ-панели:');
+                if (password === adminPassword) {
+                    localStorage.setItem('geotrack_admin', 'true');
+                } else {
+                    alert('Неверный пароль!');
+                    window.location.href = 'index.html';
+                }
+            }
+        }
+
+        function logoutAdmin() {
+            localStorage.removeItem('geotrack_admin');
+            window.location.href = 'index.html';
+        }
+
+        // ===== ЗАГРУЗКА ДАННЫХ =====
+        function loadPlaces() {
+            showLoading(true);
+            
+            // Загружаем места из localStorage
+            try {
+                // Места на модерации
+                const pendingPlaces = JSON.parse(localStorage.getItem('geotrack_pending_places') || '[]');
+                
+                // Одобренные места (из истории модерации)
+                const approvedPlaces = JSON.parse(localStorage.getItem('geotrack_approved_places') || '[]');
+                
+                // Отклоненные места (из истории модерации)
+                const rejectedPlaces = JSON.parse(localStorage.getItem('geotrack_rejected_places') || '[]');
+                
+                // Объединяем все места
+                allPlaces = [
+                    ...pendingPlaces.map(p => ({ ...p, status: 'pending' })),
+                    ...approvedPlaces.map(p => ({ ...p, status: 'approved' })),
+                    ...rejectedPlaces.map(p => ({ ...p, status: 'rejected' }))
+                ];
+                
+                // Обновляем статистику
+                updateStats();
+                
+                // Показываем текущую вкладку
+                showTab(currentFilter);
+                
+            } catch (error) {
+                console.error('Ошибка загрузки мест:', error);
+                showNotification('error', 'Ошибка', 'Не удалось загрузить данные');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function loadActivePlaces() {
+            try {
+                const activePlaces = JSON.parse(localStorage.getItem('geotrack_places') || '[]');
+                document.getElementById('total-places').textContent = activePlaces.length;
+            } catch (error) {
+                console.error('Ошибка загрузки активных мест:', error);
+            }
+        }
+
+        // ===== УПРАВЛЕНИЕ ВКЛАДКАМИ =====
+        function initTabs() {
+            document.querySelectorAll('.admin-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Убираем активный класс у всех вкладок
+                    document.querySelectorAll('.admin-tab').forEach(t => {
+                        t.classList.remove('active');
+                    });
+                    
+                    // Добавляем активный класс текущей вкладке
+                    this.classList.add('active');
+                    
+                    // Получаем идентификатор вкладки
+                    currentFilter = this.getAttribute('data-tab');
+                    
+                    // Показываем соответствующую вкладку
+                    showTab(currentFilter);
+                });
+            });
+        }
+
+        function showTab(tab) {
+            // Скрываем все разделы
+            document.getElementById('places-list').style.display = 'none';
+            document.getElementById('empty-state').style.display = 'none';
+            document.getElementById('stats-page').style.display = 'none';
+            
+            // Показываем соответствующий раздел
+            if (tab === 'stats') {
+                document.getElementById('stats-page').style.display = 'block';
+                updateStatsChart();
+                return;
+            }
+            
+            // Фильтруем места по статусу
+            let filteredPlaces = allPlaces.filter(place => {
+                if (tab === 'all') return true;
+                return place.status === tab;
+            });
+            
+            // Применяем дополнительные фильтры
+            filteredPlaces = applyAdditionalFilters(filteredPlaces);
+            
+            // Сохраняем текущие места
+            currentPlaces = filteredPlaces;
+            
+            // Показываем список мест или сообщение об отсутствии
+            if (filteredPlaces.length === 0) {
+                document.getElementById('empty-state').style.display = 'block';
+            } else {
+                document.getElementById('places-list').style.display = 'grid';
+                renderPlacesList(filteredPlaces);
+            }
+        }
+
+        // ===== ПОИСК И ФИЛЬТРЫ =====
+        function initSearch() {
+            const searchInput = document.getElementById('search-input');
+            let searchTimeout;
+            
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    currentFilters.search = this.value.toLowerCase();
+                    showTab(currentFilter);
+                }, 300);
+            });
+        }
+
+        function applyFilters() {
+            currentFilters.category = document.getElementById('category-filter').value;
+            currentFilters.region = document.getElementById('region-filter').value;
+            currentFilters.date = document.getElementById('date-filter').value;
+            
+            showTab(currentFilter);
+        }
+
+        function resetFilters() {
+            document.getElementById('search-input').value = '';
+            document.getElementById('category-filter').value = '';
+            document.getElementById('region-filter').value = '';
+            document.getElementById('date-filter').value = '';
+            
+            currentFilters = {
+                search: '',
+                category: '',
+                region: '',
+                date: ''
+            };
+            
+            showTab(currentFilter);
+        }
+
+        function applyAdditionalFilters(places) {
+            return places.filter(place => {
+                // Поиск по тексту
+                if (currentFilters.search) {
+                    const searchTerm = currentFilters.search;
+                    const searchFields = [
+                        place.name,
+                        place.region,
+                        place.description,
+                        place.category,
+                        place.addedBy
+                    ].join(' ').toLowerCase();
+                    
+                    if (!searchFields.includes(searchTerm)) {
+                        return false;
+                    }
+                }
+                
+                // Фильтр по категории
+                if (currentFilters.category && place.category !== currentFilters.category) {
+                    return false;
+                }
+                
+                // Фильтр по региону
+                if (currentFilters.region && place.region !== currentFilters.region) {
+                    return false;
+                }
+                
+                // Фильтр по дате
+                if (currentFilters.date) {
+                    const placeDate = new Date(place.addedDate);
+                    const now = new Date();
+                    
+                    switch (currentFilters.date) {
+                        case 'today':
+                            if (placeDate.toDateString() !== now.toDateString()) return false;
+                            break;
+                        case 'week':
+                            const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                            if (placeDate < weekAgo) return false;
+                            break;
+                        case 'month':
+                            const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+                            if (placeDate < monthAgo) return false;
+                            break;
+                    }
+                }
+                
+                return true;
+            });
+        }
+
+        // ===== ОТОБРАЖЕНИЕ МЕСТ =====
+        function renderPlacesList(places) {
+            const container = document.getElementById('places-list');
+            container.innerHTML = '';
+            
+            places.forEach(place => {
+                const placeCard = createPlaceCard(place);
+                container.appendChild(placeCard);
+            });
+        }
+
+        function createPlaceCard(place) {
+            const card = document.createElement('div');
+            card.className = `place-card ${place.status}`;
+            card.id = `place-${place.id}`;
+            
+            // Основная фотография (первая из массива)
+            const mainPhoto = place.photos && place.photos.length > 0 
+                ? place.photos[0].data 
+                : 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23f0f0f0"/><text x="50" y="50" font-family="Arial" font-size="14" fill="%23999" text-anchor="middle" dy=".3em">Нет фото</text></svg>';
+            
+            // Категория в текстовом виде
+            const categoryNames = {
+                'nature': 'Природа',
+                'history': 'История',
+                'culture': 'Культура',
+                'architecture': 'Архитектура',
+                'religion': 'Религия',
+                'entertainment': 'Развлечения'
+            };
+            
+            const categoryName = categoryNames[place.category] || place.category;
+            
+            // Статус на русском
+            const statusNames = {
+                'pending': 'На проверке',
+                'approved': 'Одобрено',
+                'rejected': 'Отклонено'
+            };
+            
+            const statusName = statusNames[place.status] || place.status;
+            
+            // Дата в читаемом формате
+            const date = new Date(place.addedDate).toLocaleString('ru-RU', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            card.innerHTML = `
+                <div class="place-card-header">
+                    <div class="place-info">
+                        <div class="place-photo">
+                            <img src="${mainPhoto}" alt="${place.name}" 
+                                 onerror="this.src='data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><rect width=\"100\" height=\"100\" fill=\"%23f0f0f0\"/><text x=\"50\" y=\"50\" font-family=\"Arial\" font-size=\"14" fill=\"%23999\" text-anchor=\"middle\" dy=\".3em\">Ошибка</text></svg>'">
+                        </div>
+                        <div class="place-details">
+                            <h3>${place.name}</h3>
+                            <div class="place-meta">
+                                <span><i class="fas fa-map-marker-alt"></i> ${place.region}</span>
+                                <span><i class="fas fa-tag"></i> ${categoryName}</span>
+                                <span><i class="fas fa-calendar"></i> ${date}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="place-status status-${place.status}">
+                        ${statusName}
+                    </div>
+                </div>
+                
+                <div class="place-content">
+                    <div class="place-description">
+                        <p><strong>Описание:</strong> ${place.description}</p>
+                        
+                        ${place.address ? `
+                        <p><strong>Адрес:</strong> ${place.address}</p>
+                        ` : ''}
+                        
+                        ${place.directions ? `
+                        <p><strong>Как добраться:</strong> ${place.directions}</p>
+                        ` : ''}
+                        
+                        ${place.bestTime ? `
+                        <p><strong>Лучшее время:</strong> ${place.bestTime}</p>
+                        ` : ''}
+                        
+                        ${place.visitDuration ? `
+                        <p><strong>Рекомендуемое время:</strong> ${place.visitDuration}</p>
+                        ` : ''}
+                        
+                        ${place.price ? `
+                        <p><strong>Стоимость:</strong> ${place.price}</p>
+                        ` : ''}
+                        
+                        ${place.tips ? `
+                        <p><strong>Полезные советы:</strong> ${place.tips}</p>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="place-sidebar">
+                        <div class="sidebar-section">
+                            <h4><i class="fas fa-info-circle"></i> Контакты</h4>
+                            ${place.website ? `<p><strong>Сайт:</strong> <a href="${place.website}" target="_blank">${place.website}</a></p>` : ''}
+                            ${place.phone ? `<p><strong>Телефон:</strong> ${place.phone}</p>` : ''}
+                            ${place.email ? `<p><strong>Email:</strong> ${place.email}</p>` : ''}
+                        </div>
+                        
+                        <div class="sidebar-section">
+                            <h4><i class="fas fa-map-pin"></i> Координаты</h4>
+                            <div class="coordinates">
+                                ${place.coordinates.lat.toFixed(6)}, ${place.coordinates.lng.toFixed(6)}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="photos-gallery">
+                    <div class="gallery-title">
+                        <h4><i class="fas fa-images"></i> Фотографии (${place.photos ? place.photos.length : 0})</h4>
+                        ${place.photos && place.photos.length > 0 ? `
+                        <button class="action-btn btn-edit" style="padding: 5px 10px; font-size: 0.9rem;" 
+                                onclick="showAllPhotos('${place.id}')">
+                            <i class="fas fa-expand"></i> Показать все
+                        </button>
+                        ` : ''}
+                    </div>
+                    
+                    ${place.photos && place.photos.length > 0 ? `
+                    <div class="photos-grid">
+                        ${place.photos.slice(0, 5).map((photo, index) => `
+                            <div class="photo-item" onclick="showPhoto('${place.id}', ${index})">
+                                <img src="${photo.data}" alt="Фото ${index + 1}">
+                                ${index === 4 && place.photos.length > 5 ? `
+                                <div class="photo-count">+${place.photos.length - 5}</div>
+                                ` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                    ` : `
+                    <p style="color: var(--gray); text-align: center; padding: var(--space-md);">
+                        Фотографии не загружены
+                    </p>
+                    `}
+                </div>
+                
+                <div class="place-actions">
+                    <div class="submitter-info">
+                        <div class="submitter-avatar">
+                            ${place.addedBy ? place.addedBy.charAt(0).toUpperCase() : '?'}
+                        </div>
+                        <div>
+                            <strong>Добавил:</strong> ${place.addedBy || 'Анонимный пользователь'}
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        ${place.status === 'pending' ? `
+                        <button class="action-btn btn-approve" onclick="approvePlace('${place.id}')">
+                            <i class="fas fa-check"></i>
+                            Одобрить
+                        </button>
+                        <button class="action-btn btn-reject" onclick="rejectPlace('${place.id}')">
+                            <i class="fas fa-times"></i>
+                            Отклонить
+                        </button>
+                        ` : ''}
+                        
+                        ${place.status === 'approved' ? `
+                        <button class="action-btn btn-edit" onclick="editPlace('${place.id}')">
+                            <i class="fas fa-edit"></i>
+                            Редактировать
+                        </button>
+                        <button class="action-btn btn-reject" onclick="moveToPending('${place.id}')">
+                            <i class="fas fa-undo"></i>
+                            Вернуть на проверку
+                        </button>
+                        ` : ''}
+                        
+                        ${place.status === 'rejected' ? `
+                        <button class="action-btn btn-approve" onclick="approvePlace('${place.id}')">
+                            <i class="fas fa-check"></i>
+                            Одобрить
+                        </button>
+                        <button class="action-btn btn-edit" onclick="editPlace('${place.id}')">
+                            <i class="fas fa-edit"></i>
+                            Редактировать
+                        </button>
+                        ` : ''}
+                        
+                        <button class="action-btn" onclick="deletePlace('${place.id}')" 
+                                style="background: var(--danger);">
+                            <i class="fas fa-trash"></i>
+                            Удалить
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        // ===== ДЕЙСТВИЯ АДМИНА =====
+        function approvePlace(placeId) {
+            const place = allPlaces.find(p => p.id === placeId);
+            if (!place) return;
+            
+            // Подтверждение действия
+            if (!confirm(`Одобрить место "${place.name}"? Оно появится на карте.`)) {
+                return;
+            }
+            
+            showLoading(true);
+            
+            try {
+                // Удаляем из pending
+                let pendingPlaces = JSON.parse(localStorage.getItem('geotrack_pending_places') || '[]');
+                pendingPlaces = pendingPlaces.filter(p => p.id !== placeId);
+                localStorage.setItem('geotrack_pending_places', JSON.stringify(pendingPlaces));
+                
+                // Добавляем в approved
+                let approvedPlaces = JSON.parse(localStorage.getItem('geotrack_approved_places') || '[]');
+                approvedPlaces.push({ ...place, approvedDate: new Date().toISOString(), approvedBy: 'admin' });
+                localStorage.setItem('geotrack_approved_places', JSON.stringify(approvedPlaces));
+                
+                // Добавляем на главную карту
+                let activePlaces = JSON.parse(localStorage.getItem('geotrack_places') || '[]');
+                
+                // Создаем формат для главной страницы
+                const activePlace = {
+                    id: placeId,
+                    name: place.name,
+                    region: place.region,
+                    lat: place.coordinates.lat,
+                    lng: place.coordinates.lng,
+                    desc: place.description.substring(0, 100) + (place.description.length > 100 ? '...' : ''),
+                    audio: null, // Аудиогид можно добавить позже
+                    cat: place.category,
+                    photos: place.photos || [],
+                    address: place.address || '',
+                    price: place.price || '',
+                    website: place.website || '',
+                    phone: place.phone || '',
+                    rating: 0,
+                    reviews: []
+                };
+                
+                activePlaces.push(activePlace);
+                localStorage.setItem('geotrack_places', JSON.stringify(activePlaces));
+                
+                // Обновляем данные
+                loadPlaces();
+                
+                // Показываем уведомление
+                showSuccessModal(`Место "${place.name}" одобрено и добавлено на карту!`);
+                
+            } catch (error) {
+                console.error('Ошибка при одобрении места:', error);
+                showNotification('error', 'Ошибка', 'Не удалось одобрить место');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function rejectPlace(placeId) {
+            currentRejectPlaceId = placeId;
+            document.getElementById('reject-modal').classList.add('active');
+        }
+
+        function confirmRejection() {
+            const reason = document.getElementById('reject-reason').value;
+            const comment = document.getElementById('reject-comment').value;
+            
+            if (!reason) {
+                alert('Пожалуйста, выберите причину отклонения');
+                return;
+            }
+            
+            const place = allPlaces.find(p => p.id === currentRejectPlaceId);
+            if (!place) return;
+            
+            showLoading(true);
+            
+            try {
+                // Удаляем из pending
+                let pendingPlaces = JSON.parse(localStorage.getItem('geotrack_pending_places') || '[]');
+                pendingPlaces = pendingPlaces.filter(p => p.id !== currentRejectPlaceId);
+                localStorage.setItem('geotrack_pending_places', JSON.stringify(pendingPlaces));
+                
+                // Добавляем в rejected с причиной
+                let rejectedPlaces = JSON.parse(localStorage.getItem('geotrack_rejected_places') || '[]');
+                rejectedPlaces.push({ 
+                    ...place, 
+                    rejectedDate: new Date().toISOString(),
+                    rejectedBy: 'admin',
+                    rejectionReason: reason,
+                    rejectionComment: comment
+                });
+                localStorage.setItem('geotrack_rejected_places', JSON.stringify(rejectedPlaces));
+                
+                // Обновляем данные
+                loadPlaces();
+                
+                // Закрываем модальное окно
+                closeRejectModal();
+                
+                // Показываем уведомление
+                showSuccessModal(`Место "${place.name}" отклонено.`);
+                
+            } catch (error) {
+                console.error('Ошибка при отклонении места:', error);
+                showNotification('error', 'Ошибка', 'Не удалось отклонить место');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function moveToPending(placeId) {
+            const place = allPlaces.find(p => p.id === placeId);
+            if (!place) return;
+            
+            if (!confirm(`Вернуть место "${place.name}" на проверку?`)) {
+                return;
+            }
+            
+            showLoading(true);
+            
+            try {
+                // Удаляем из approved
+                let approvedPlaces = JSON.parse(localStorage.getItem('geotrack_approved_places') || '[]');
+                approvedPlaces = approvedPlaces.filter(p => p.id !== placeId);
+                localStorage.setItem('geotrack_approved_places', JSON.stringify(approvedPlaces));
+                
+                // Удаляем с главной карты
+                let activePlaces = JSON.parse(localStorage.getItem('geotrack_places') || '[]');
+                activePlaces = activePlaces.filter(p => p.id !== placeId);
+                localStorage.setItem('geotrack_places', JSON.stringify(activePlaces));
+                
+                // Добавляем в pending
+                let pendingPlaces = JSON.parse(localStorage.getItem('geotrack_pending_places') || '[]');
+                pendingPlaces.push(place);
+                localStorage.setItem('geotrack_pending_places', JSON.stringify(pendingPlaces));
+                
+                // Обновляем данные
+                loadPlaces();
+                
+                showNotification('success', 'Успешно', 'Место возвращено на проверку');
+                
+            } catch (error) {
+                console.error('Ошибка при возврате места:', error);
+                showNotification('error', 'Ошибка', 'Не удалось вернуть место');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function editPlace(placeId) {
+            // В реальном приложении здесь была бы страница редактирования
+            alert('Редактирование места. В полной версии здесь открывается форма редактирования.');
+        }
+
+        function deletePlace(placeId) {
+            const place = allPlaces.find(p => p.id === placeId);
+            if (!place) return;
+            
+            if (!confirm(`Удалить место "${place.name}"? Это действие нельзя отменить.`)) {
+                return;
+            }
+            
+            showLoading(true);
+            
+            try {
+                // Удаляем из всех списков
+                let pendingPlaces = JSON.parse(localStorage.getItem('geotrack_pending_places') || '[]');
+                pendingPlaces = pendingPlaces.filter(p => p.id !== placeId);
+                localStorage.setItem('geotrack_pending_places', JSON.stringify(pendingPlaces));
+                
+                let approvedPlaces = JSON.parse(localStorage.getItem('geotrack_approved_places') || '[]');
+                approvedPlaces = approvedPlaces.filter(p => p.id !== placeId);
+                localStorage.setItem('geotrack_approved_places', JSON.stringify(approvedPlaces));
+                
+                let rejectedPlaces = JSON.parse(localStorage.getItem('geotrack_rejected_places') || '[]');
+                rejectedPlaces = rejectedPlaces.filter(p => p.id !== placeId);
+                localStorage.setItem('geotrack_rejected_places', JSON.stringify(rejectedPlaces));
+                
+                // Удаляем с главной карты, если есть
+                let activePlaces = JSON.parse(localStorage.getItem('geotrack_places') || '[]');
+                activePlaces = activePlaces.filter(p => p.id !== placeId);
+                localStorage.setItem('geotrack_places', JSON.stringify(activePlaces));
+                
+                // Обновляем данные
+                loadPlaces();
+                
+                showNotification('success', 'Удалено', 'Место успешно удалено');
+                
+            } catch (error) {
+                console.error('Ошибка при удалении места:', error);
+                showNotification('error', 'Ошибка', 'Не удалось удалить место');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // ===== ФОТОГРАФИИ =====
+        function showAllPhotos(placeId) {
+            const place = allPlaces.find(p => p.id === placeId);
+            if (!place || !place.photos || place.photos.length === 0) return;
+            
+            const modalContent = document.getElementById('photo-modal-content');
+            modalContent.innerHTML = `
+                <h4 style="margin-bottom: var(--space-md);">${place.name} - Все фотографии</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-sm);">
+                    ${place.photos.map((photo, index) => `
+                        <div style="border-radius: var(--radius-md); overflow: hidden; cursor: pointer;">
+                            <img src="${photo.data}" alt="Фото ${index + 1}" 
+                                 style="width: 100%; height: 150px; object-fit: cover;"
+                                 onclick="showPhoto('${placeId}', ${index})">
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            document.getElementById('photo-modal').classList.add('active');
+        }
+
+        function showPhoto(placeId, photoIndex) {
+            const place = allPlaces.find(p => p.id === placeId);
+            if (!place || !place.photos || !place.photos[photoIndex]) return;
+            
+            const modalContent = document.getElementById('photo-modal-content');
+            modalContent.innerHTML = `
+                <div style="text-align: center;">
+                    <img src="${place.photos[photoIndex].data}" 
+                         alt="Фото ${photoIndex + 1}" 
+                         style="max-width: 100%; max-height: 70vh; border-radius: var(--radius-md);">
+                    
+                    <div style="margin-top: var(--space-md); display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong>${place.name}</strong><br>
+                            <small>Фото ${photoIndex + 1} из ${place.photos.length}</small>
+                        </div>
+                        
+                        <div>
+                            <button class="action-btn" style="padding: 5px 10px; font-size: 0.9rem;"
+                                    onclick="deletePhoto('${placeId}', ${photoIndex})">
+                                <i class="fas fa-trash"></i> Удалить фото
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('photo-modal').classList.add('active');
+        }
+
+        function deletePhoto(placeId, photoIndex) {
+            if (!confirm('Удалить эту фотографию?')) return;
+            
+            try {
+                // Находим место во всех списках
+                let pendingPlaces = JSON.parse(localStorage.getItem('geotrack_pending_places') || '[]');
+                let approvedPlaces = JSON.parse(localStorage.getItem('geotrack_approved_places') || '[]');
+                let rejectedPlaces = JSON.parse(localStorage.getItem('geotrack_rejected_places') || '[]');
+                
+                // Удаляем фото из всех списков
+                [pendingPlaces, approvedPlaces, rejectedPlaces].forEach(list => {
+                    const place = list.find(p => p.id === placeId);
+                    if (place && place.photos) {
+                        place.photos.splice(photoIndex, 1);
+                    }
+                });
+                
+                // Сохраняем обратно
+                localStorage.setItem('geotrack_pending_places', JSON.stringify(pendingPlaces));
+                localStorage.setItem('geotrack_approved_places', JSON.stringify(approvedPlaces));
+                localStorage.setItem('geotrack_rejected_places', JSON.stringify(rejectedPlaces));
+                
+                // Обновляем отображение
+                loadPlaces();
+                closePhotoModal();
+                
+                showNotification('success', 'Удалено', 'Фотография удалена');
+                
+            } catch (error) {
+                console.error('Ошибка при удалении фото:', error);
+                showNotification('error', 'Ошибка', 'Не удалось удалить фотографию');
+            }
+        }
+
+        // ===== СТАТИСТИКА =====
+        function updateStats() {
+            const pending = allPlaces.filter(p => p.status === 'pending').length;
+            const approved = allPlaces.filter(p => p.status === 'approved').length;
+            const rejected = allPlaces.filter(p => p.status === 'rejected').length;
+            const total = allPlaces.length;
+            
+            // Обновляем заголовок
+            document.getElementById('pending-count').textContent = pending;
+            document.getElementById('approved-count').textContent = approved;
+            document.getElementById('rejected-count').textContent = rejected;
+            
+            // Обновляем бейджи
+            document.getElementById('badge-pending').textContent = pending;
+            document.getElementById('badge-approved').textContent = approved;
+            document.getElementById('badge-rejected').textContent = rejected;
+            document.getElementById('badge-all').textContent = total;
+            
+            // Обновляем статистику
+            document.getElementById('stats-pending').textContent = pending;
+            document.getElementById('stats-approved').textContent = approved;
+            document.getElementById('stats-rejected').textContent = rejected;
+        }
+
+        function updateStatsChart() {
+            const ctx = document.getElementById('activityChart').getContext('2d');
+            
+            // Собираем данные по дням (последние 7 дней)
+            const last7Days = [];
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                last7Days.push(date.toLocaleDateString('ru-RU', { weekday: 'short' }));
+            }
+            
+            // В реальном приложении здесь были бы реальные данные
+            const approvedData = [3, 5, 2, 8, 4, 6, 7];
+            const rejectedData = [1, 2, 1, 3, 2, 1, 2];
+            
+            if (activityChart) {
+                activityChart.destroy();
+            }
+            
+            activityChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: last7Days,
+                    datasets: [
+                        {
+                            label: 'Одобрено',
+                            data: approvedData,
+                            backgroundColor: 'rgba(76, 175, 80, 0.7)',
+                            borderColor: 'rgba(76, 175, 80, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Отклонено',
+                            data: rejectedData,
+                            backgroundColor: 'rgba(244, 67, 54, 0.7)',
+                            borderColor: 'rgba(244, 67, 54, 1)',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ===== МОДАЛЬНЫЕ ОКНА =====
+        function closePhotoModal() {
+            document.getElementById('photo-modal').classList.remove('active');
+        }
+
+        function closeRejectModal() {
+            document.getElementById('reject-modal').classList.remove('active');
+            document.getElementById('reject-reason').value = '';
+            document.getElementById('reject-comment').value = '';
+            currentRejectPlaceId = null;
+        }
+
+        function showSuccessModal(message) {
+            document.getElementById('success-message').textContent = message;
+            document.getElementById('success-modal').classList.add('active');
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('success-modal').classList.remove('active');
+        }
+
+        // ===== УТИЛИТЫ =====
+        function showLoading(show) {
+            document.getElementById('loading').classList.toggle('active', show);
+        }
+
+        function showNotification(type, title, message) {
+            // В реальном приложении здесь было бы красивое уведомление
+            alert(`${title}: ${message}`);
+        }
+
+        // ===== СИНХРОНИЗАЦИЯ С ФОРМОЙ ДОБАВЛЕНИЯ =====
+        // Эта функция вызывается из формы добавления
+        function syncWithAddForm() {
+            // При добавлении нового места в форме add-place.html
+            // оно автоматически попадает в localStorage под ключом 'geotrack_pending_places'
+            // и отображается в админ-панели при обновлении
+        }
+
+        // Автообновление каждые 30 секунд
+        setInterval(() => {
+            if (currentFilter !== 'stats') {
+                loadPlaces();
+            }
+        }, 30000);
+    </script>
+</body>
+</html>
